@@ -48,7 +48,7 @@ public class Main {
 
     private static void loadProducts() {
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader("transactions.csv"));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader("Transaction.csv"));
 
             String input;
 
@@ -181,40 +181,34 @@ public class Main {
     }
 
     private static void addDeposit() {
-        System.out.println("Please add the deposit");
+        System.out.println("Please enter the deposit amount");
         double depositAmount = scanner.nextDouble();
-
-        System.out.println("Please enter the date of the deposit");
-        String dateOfDeposit = scanner.next();
+scanner.nextLine();
+        System.out.println("Please enter the date of the deposit format:yyyy-MM-dd");
+        String dateOfDeposit = scanner.nextLine();
         LocalDate depositDate = LocalDate.parse(dateOfDeposit);
 
-        System.out.println("Please enter the time of the deposit");
-        String timeOfDeposit = scanner.next();
+        System.out.println("Please enter the time of the deposit format:HH:mm:ss");
+        String timeOfDeposit = scanner.nextLine();
         LocalTime depositTime = LocalTime.parse(timeOfDeposit);
 
         System.out.println("Please enter the description of the deposit");
-        String descriptionOfDeposit = scanner.next();
+        String descriptionOfDeposit = scanner.nextLine();
 
         System.out.println("Please enter the name of the vendor");
-        String vendorName = scanner.next();
-        
+        String vendorName = scanner.nextLine();
+
         transactions.add(new Transaction(depositDate, depositTime, descriptionOfDeposit, vendorName, depositAmount));
 
 
         try {
-            FileWriter fileWriter = new FileWriter("Transaction.csv");
-            PrintWriter printWriter = new PrintWriter(fileWriter);
-            String deposit = scanner.nextLine();
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("Transaction.csv", true));
+            String formattedTransaction = String.format("%s|%s|%s|%s|%.2f", depositDate, depositTime, descriptionOfDeposit, vendorName, depositAmount);
+            bufferedWriter.write(formattedTransaction);
+            bufferedWriter.newLine();
+            bufferedWriter.close();
 
-            String[] newDeposit = deposit.split(",");
-            String date = newDeposit[0];
-            String time = newDeposit[1];
-            String description = newDeposit[2];
-            String vendor = newDeposit[3];
-            double amount = Double.parseDouble(newDeposit[4].trim());
-
-            String newUserDeposit = String.format("%s|%s|%s|%s|$.2f", date, time, description, vendor, amount);
-
+            System.out.println("You have added " + formattedTransaction + " to the list");
 
         } catch (IOException e) {
             System.out.println("Error while adding deposit");
