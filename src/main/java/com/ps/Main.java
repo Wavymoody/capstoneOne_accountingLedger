@@ -108,11 +108,7 @@ public class Main {
     }
 
 
-
     private static void displayReport() {
-
-
-
 
 
         System.out.println("Please select a option:");
@@ -142,7 +138,7 @@ public class Main {
                 displaySearchByVendor();
                 break;
             case 0:
-                displayReport();
+                showLedgerScreen();
                 break;
 
 
@@ -152,42 +148,44 @@ public class Main {
     }
 
 
-
     private static void displaySearchByVendor() {
         scanner.nextLine();
         System.out.println("Give me a vendor name");
         String userVendorInput = scanner.nextLine();
-        for (Transaction transaction : transactions){
+        for (Transaction transaction : transactions) {
             LocalDate date = transaction.getDate();
             if (userVendorInput.equals(transaction.getVendor())) {
                 System.out.println(transaction);
 
             }
         }
+        displayReport();
 
     }
 
     private static void displayPreviousYear() {
         LocalDate previousYearDate = todayDate.minusYears(1);
         int previousYear = previousYearDate.getYear();
-        for (Transaction transaction : transactions){
+        for (Transaction transaction : transactions) {
             LocalDate date = transaction.getDate();
             if (date.getYear() == previousYear) {
                 System.out.println(transaction);
 
             }
         }
+        displayReport();
     }
 
     private static void displayYearToDate() {
         int thisYear = todayDate.getYear();
-        for (Transaction transaction : transactions){
+        for (Transaction transaction : transactions) {
             LocalDate date = transaction.getDate();
             if (date.getYear() == thisYear) {
                 System.out.println(transaction);
 
             }
         }
+        displayReport();
 
     }
 
@@ -195,26 +193,27 @@ public class Main {
         LocalDate previousMonthDate = todayDate.minusMonths(1);
         int lastMonth = previousMonthDate.getMonthValue();
         int thisYear = todayDate.getYear();
-        for (Transaction transaction : transactions){
+        for (Transaction transaction : transactions) {
             LocalDate date = transaction.getDate();
             if (date.getMonthValue() == lastMonth && date.getYear() == thisYear) {
                 System.out.println(transaction);
 
             }
         }
+        displayReport();
     }
 
     private static void displayMonthToDate() {
         int thisMonth = todayDate.getMonthValue();
         int thisYear = todayDate.getYear();
-        for (Transaction transaction : transactions){
+        for (Transaction transaction : transactions) {
             LocalDate date = transaction.getDate();
             if (date.getMonthValue() == thisMonth && date.getYear() == thisYear) {
                 System.out.println(transaction);
 
             }
         }
-
+        displayReport();
 
     }
 
@@ -226,7 +225,9 @@ public class Main {
                 System.out.println(transaction);
             }
         }
+        showLedgerScreen();
     }
+
     private static void displayDeposit() {
         System.out.println("Display All Deposits");
         for (Transaction transaction : transactions) {
@@ -236,96 +237,99 @@ public class Main {
             }
 
         }
+        showLedgerScreen();
     }
-        private static void displayAllEntries () {
 
-            System.out.println("Display All Entries");
-            for (Transaction transaction : transactions) {
+    private static void displayAllEntries() {
+
+        System.out.println("Display All Entries");
+        for (Transaction transaction : transactions) {
 
 
-                System.out.println(transaction);
-            }
+            System.out.println(transaction);
         }
+        showLedgerScreen();
+    }
 
 
-        private static void makePayment () {
-            System.out.println("Please enter the payment amount");
-            double paymentAmount = scanner.nextDouble();
-            paymentAmount = -paymentAmount;
-            scanner.nextLine();
-            System.out.println("Please enter the date of the payment format:yyyy-MM-dd");
-            String dateOfPayment = scanner.nextLine();
-            LocalDate paymentDate = LocalDate.parse(dateOfPayment);
+    private static void makePayment() {
+        System.out.println("Please enter the payment amount");
+        double paymentAmount = scanner.nextDouble();
+        paymentAmount = -paymentAmount;
+        scanner.nextLine();
+        System.out.println("Please enter the date of the payment (format:yyyy-MM-dd)");
+        String dateOfPayment = scanner.nextLine();
+        LocalDate paymentDate = LocalDate.parse(dateOfPayment);
 
-            System.out.println("Please enter the time of the payment format:HH:mm:ss");
-            String timeOfPayment = scanner.nextLine();
-            LocalTime paymentTime = LocalTime.parse(timeOfPayment);
+        System.out.println("Please enter the time of the payment (format:HH:mm:ss)");
+        String timeOfPayment = scanner.nextLine();
+        LocalTime paymentTime = LocalTime.parse(timeOfPayment);
 
-            System.out.println("Please enter the description of the payment");
-            String descriptionOfPayment = scanner.nextLine();
+        System.out.println("Please enter the description of the payment");
+        String descriptionOfPayment = scanner.nextLine();
 
-            System.out.println("Please enter the name of the vendor");
-            String vendorName = scanner.nextLine();
+        System.out.println("Please enter the name of the vendor");
+        String vendorName = scanner.nextLine();
 
-            transactions.add(new Transaction(paymentDate, paymentTime, descriptionOfPayment, vendorName, paymentAmount));
-
-
-            try {
-                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("Transaction.csv", true));
-                String formattedTransaction = String.format("%s|%s|%s|%s|%.2f", paymentDate, paymentTime, descriptionOfPayment, vendorName, paymentAmount);
-                bufferedWriter.write(formattedTransaction);
-                bufferedWriter.newLine();
-                bufferedWriter.close();
-
-                System.out.println("You have made the following payment\n" + formattedTransaction);
-
-            } catch (IOException e) {
-                System.out.println("Error while making payment");
-                e.printStackTrace();
+        transactions.add(new Transaction(paymentDate, paymentTime, descriptionOfPayment, vendorName, paymentAmount));
 
 
-            }
-        }
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("Transaction.csv", true));
+            String formattedTransaction = String.format("%s|%s|%s|%s|%.2f", paymentDate, paymentTime, descriptionOfPayment, vendorName, paymentAmount);
+            bufferedWriter.write(formattedTransaction);
+            bufferedWriter.newLine();
+            bufferedWriter.close();
+
+            System.out.println("You have made the following payment\n" + formattedTransaction);
+
+        } catch (IOException e) {
+            System.out.println("Error while making payment");
+            e.printStackTrace();
 
 
-        private static void addDeposit () {
-            System.out.println("Please enter the deposit amount");
-            double depositAmount = scanner.nextDouble();
-            scanner.nextLine();
-            System.out.println("Please enter the date of the deposit format:yyyy-MM-dd");
-            String dateOfDeposit = scanner.nextLine();
-            LocalDate depositDate = LocalDate.parse(dateOfDeposit);
-
-            System.out.println("Please enter the time of the deposit format:HH:mm:ss");
-            String timeOfDeposit = scanner.nextLine();
-            LocalTime depositTime = LocalTime.parse(timeOfDeposit);
-
-            System.out.println("Please enter the description of the deposit");
-            String descriptionOfDeposit = scanner.nextLine();
-
-            System.out.println("Please enter the name of the vendor");
-            String vendorName = scanner.nextLine();
-
-            transactions.add(new Transaction(depositDate, depositTime, descriptionOfDeposit, vendorName, depositAmount));
-
-
-            try {
-                BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("Transaction.csv", true));
-                String formattedTransaction = String.format("%s|%s|%s|%s|%.2f", depositDate, depositTime, descriptionOfDeposit, vendorName, depositAmount);
-                bufferedWriter.write(formattedTransaction);
-                bufferedWriter.newLine();
-                bufferedWriter.close();
-
-                System.out.println("You have added " + formattedTransaction + " to the list");
-
-            } catch (IOException e) {
-                System.out.println("Error while added deposit");
-                e.printStackTrace();
-
-
-            }
         }
     }
+
+
+    private static void addDeposit() {
+        System.out.println("Please enter the deposit amount");
+        double depositAmount = scanner.nextDouble();
+        scanner.nextLine();
+        System.out.println("Please enter the date of the deposit (format:yyyy-MM-dd)");
+        String dateOfDeposit = scanner.nextLine();
+        LocalDate depositDate = LocalDate.parse(dateOfDeposit);
+
+        System.out.println("Please enter the time of the deposit (format:HH:mm:ss)");
+        String timeOfDeposit = scanner.nextLine();
+        LocalTime depositTime = LocalTime.parse(timeOfDeposit);
+
+        System.out.println("Please enter the description of the deposit");
+        String descriptionOfDeposit = scanner.nextLine();
+
+        System.out.println("Please enter the name of the vendor");
+        String vendorName = scanner.nextLine();
+
+        transactions.add(new Transaction(depositDate, depositTime, descriptionOfDeposit, vendorName, depositAmount));
+
+
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("Transaction.csv", true));
+            String formattedTransaction = String.format("%s|%s|%s|%s|%.2f", depositDate, depositTime, descriptionOfDeposit, vendorName, depositAmount);
+            bufferedWriter.write(formattedTransaction);
+            bufferedWriter.newLine();
+            bufferedWriter.close();
+
+            System.out.println("You have added " + formattedTransaction + " to the list");
+
+        } catch (IOException e) {
+            System.out.println("Error while added deposit");
+            e.printStackTrace();
+
+
+        }
+    }
+}
 
 
 
